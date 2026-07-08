@@ -2,10 +2,12 @@ import { useState } from "react";
 import logger from "../utils/logger";
 
 const usePasswordGenerator = () => {
+	logger.debug('>>> Entering usePasswordGenerator()');
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     const generatePassword = (checkboxData, length) => {
+		logger.debug(`>>> Entering generatePassword(checkboxData=${checkboxData},length=${length})`);
         let characters = "", generatePassword = "";
         const selectedCheckbox = checkboxData.filter(checkbox => checkbox.status);
 
@@ -43,6 +45,7 @@ const usePasswordGenerator = () => {
         setPassword(generatePassword);
         setErrorMessage("");
         logger.info("Password generated successfully", { length: generatePassword.length });
+		logger.debug(`<<< Exiting generatePassword(checkboxData=${checkboxData},length=${length})`);
     };
 
     return {

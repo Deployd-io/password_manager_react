@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import logger from "../utils/logger.js";
 
 const PasswordStorage = ({ currentPassword }) => {
+	logger.debug(`>>> Entering PasswordStorage(currentPassword=${currentPassword})`);
     const [storedPasswords, setStoredPasswords] = useState([]);
     const [isAddingNew, setIsAddingNew] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -34,11 +36,14 @@ const PasswordStorage = ({ currentPassword }) => {
     }, [currentPassword]);
 
     const handleInputChange = (e) => {
+		logger.debug(`>>> Entering handleInputChange(e=${e})`);
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+		logger.debug(`<<< Exiting handleInputChange(e=${e})`);
     };
 
     const handleSubmit = (e) => {
+		logger.debug(`>>> Entering handleSubmit(e=${e})`);
         e.preventDefault();
         if (!formData.url || !formData.password) {
             alert('URL and Password are required!');
@@ -64,9 +69,11 @@ const PasswordStorage = ({ currentPassword }) => {
 
         setFormData({ url: '', username: '', password: '', notes: '' });
         setIsAddingNew(false);
+		logger.debug(`<<< Exiting handleSubmit(e=${e})`);
     };
 
     const handleEdit = (item) => {
+		logger.debug(`>>> Entering handleEdit(item=${item})`);
         setFormData({
             url: item.url,
             username: item.username,
@@ -75,13 +82,16 @@ const PasswordStorage = ({ currentPassword }) => {
         });
         setEditingId(item.id);
         setIsAddingNew(true);
+		logger.debug(`<<< Exiting handleEdit(item=${item})`);
     };
 
     const handleDelete = (id) => {
+		logger.debug(`>>> Entering handleDelete(id=${id})`);
         if (window.confirm('Delete this password?')) {
             setStoredPasswords(prev => prev.filter(item => item.id !== id));
             if (storedPasswords.length === 1) {
                 localStorage.removeItem('storedPasswords');
+				logger.debug(`<<< Exiting handleDelete(id=${id})`);
             }
         }
     };
@@ -91,24 +101,34 @@ const PasswordStorage = ({ currentPassword }) => {
     };
 
     const togglePasswordVisibility = (id) => {
+		logger.debug(`>>> Entering togglePasswordVisibility(id=${id})`);
         setShowPassword(prev => ({ ...prev, [id]: !prev[id] }));
+		logger.debug(`<<< Exiting togglePasswordVisibility(id=${id})`);
     };
 
     const handleExport = () => {
+		logger.debug('>>> Entering handleExport()');
         const dataStr = JSON.stringify(storedPasswords, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
+		logger.debug(`handleExport(): dataStr → ${dataStr}`);
+		logger.debug(`handleExport(): dataBlob → ${dataBlob}`);
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
+		logger.debug(`handleExport(): url → ${url}`);
+		logger.debug(`handleExport(): link → ${link}`);
         link.href = url;
         link.download = `passwords_${new Date().toISOString().split('T')[0]}.json`;
         link.click();
+		logger.debug("PasswordStorage(currentPassword={}): link.href → {}", currentPassword, link.href);
         URL.revokeObjectURL(url);
     };
 
     const handleImportJSON = (e) => {
+		logger.debug(`>>> Entering handleImportJSON(e=${e})`);
         const file = e.target.files[0];
         if (file && file.name.endsWith('.json')) {
             const reader = new FileReader();
+			logger.debug(`handleImportJSON(e=${e}): reader → ${reader}`);
             reader.onload = (event) => {
                 try {
                     const imported = JSON.parse(event.target.result);
@@ -122,14 +142,18 @@ const PasswordStorage = ({ currentPassword }) => {
                 }
             };
             reader.readAsText(file);
+			logger.error(`Exception in PasswordStorage(currentPassword=${currentPassword}): ${error.message}`, error);
         }
         e.target.value = '';
+		logger.debug(`<<< Exiting handleImportJSON(e=${e})`);
     };
 
     const handleImportCSV = (e) => {
+		logger.debug(`>>> Entering handleImportCSV(e=${e})`);
         const file = e.target.files[0];
         if (file && (file.name.endsWith('.csv') || file.name.endsWith('.xlsx'))) {
             const reader = new FileReader();
+			logger.debug(`handleImportCSV(e=${e}): reader → ${reader}`);
             reader.onload = (event) => {
                 try {
                     const text = event.target.result;
@@ -174,9 +198,11 @@ const PasswordStorage = ({ currentPassword }) => {
             reader.readAsText(file);
         }
         e.target.value = '';
+		logger.debug(`<<< Exiting handleImportCSV(e=${e})`);
     };
 
     const exportToCSV = () => {
+		logger.debug('>>> Entering exportToCSV()');
         const headers = ['URL', 'Username', 'Password', 'Notes'];
         const csvContent = [
             headers.join(','),
@@ -186,12 +212,17 @@ const PasswordStorage = ({ currentPassword }) => {
                     .join(',')
             )
         ].join('\n');
+		logger.debug(`exportToCSV(): headers → ${headers}`);
 
         const blob = new Blob([csvContent], { type: 'text/csv' });
+		logger.debug(`exportToCSV(): blob → ${blob}`);
         const url = URL.createObjectURL(blob);
+		logger.debug(`exportToCSV(): url → ${url}`);
         const link = document.createElement('a');
+		logger.debug(`exportToCSV(): link → ${link}`);
         link.href = url;
         link.download = `passwords_${new Date().toISOString().split('T')[0]}.csv`;
+		logger.debug("exportToCSV(): link.href → {}", link.href);
         link.click();
         URL.revokeObjectURL(url);
     };
@@ -201,6 +232,7 @@ const PasswordStorage = ({ currentPassword }) => {
         item.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+	logger.debug(`<<< Exiting PasswordStorage(currentPassword=${currentPassword})`);
     return (
         <div className="space-y-6">
             {/* Header Section */}
