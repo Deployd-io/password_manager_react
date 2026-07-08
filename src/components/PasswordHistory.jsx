@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import logger from "../utils/logger.js";
 
 const PasswordHistory = ({ currentPassword }) => {
+	logger.debug(`>>> Entering PasswordHistory(currentPassword=${currentPassword})`);
     const [history, setHistory] = useState([]);
     const [showHistory, setShowHistory] = useState(false);
 
@@ -26,10 +28,13 @@ const PasswordHistory = ({ currentPassword }) => {
     }, [currentPassword]);
 
     const handleCopy = (password) => {
+		logger.debug(`>>> Entering handleCopy(password=${password})`);
         navigator.clipboard.writeText(password);
+		logger.debug(`<<< Exiting handleCopy(password=${password})`);
     };
 
     const clearHistory = () => {
+		logger.debug('>>> Entering clearHistory()');
         if (window.confirm('Clear all password history?')) {
             setHistory([]);
             localStorage.removeItem('passwordHistory');
@@ -38,6 +43,7 @@ const PasswordHistory = ({ currentPassword }) => {
 
     if (history.length === 0) return null;
 
+	logger.debug(`<<< Exiting PasswordHistory(currentPassword=${currentPassword})`);
     return (
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center justify-between mb-3">

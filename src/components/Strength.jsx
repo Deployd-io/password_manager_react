@@ -1,14 +1,21 @@
+import logger from "../utils/logger.js";
 const PasswordStrength = ({ password = "" }) => {
+	logger.debug(`>>> Entering PasswordStrength(password=${password})`);
     const getPasswordStrength = () => {
+		logger.debug('>>> Entering getPasswordStrength()');
         if (!password || password.length < 1) {
             return null;
         }
 
         let score = 0;
         const hasLower = /[a-z]/.test(password);
+		logger.debug(`getPasswordStrength(): hasLower → ${hasLower}`);
         const hasUpper = /[A-Z]/.test(password);
+		logger.debug(`getPasswordStrength(): hasUpper → ${hasUpper}`);
         const hasNumber = /[0-9]/.test(password);
+		logger.debug(`getPasswordStrength(): hasNumber → ${hasNumber}`);
         const hasSpecial = /[!@#$%^&*()_\-+={\[}\]|:;<,>.?/+]/.test(password);
+		logger.debug(`getPasswordStrength(): hasSpecial → ${hasSpecial}`);
 
         if (password.length >= 8) score += 1;
         if (password.length >= 12) score += 1;
@@ -56,11 +63,13 @@ const PasswordStrength = ({ password = "" }) => {
     };
 
     const strength = getPasswordStrength();
+	logger.debug(`PasswordStrength(password=${password}): strength → ${strength}`);
     
     if (!strength) {
         return null;
     }
 
+	logger.debug(`<<< Exiting PasswordStrength(password=${password})`);
     return (
         <div className={`p-4 rounded-lg border ${strength.border} ${strength.bg}`}>
             <div className="flex items-center justify-between mb-2">
