@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import logger from "../utils/logger.js";
 
 const PasswordHistory = ({ currentPassword }) => {
     const [history, setHistory] = useState([]);
@@ -30,9 +31,11 @@ const PasswordHistory = ({ currentPassword }) => {
     };
 
     const clearHistory = () => {
+		logger.debug('>>> Entering clearHistory()');
         if (window.confirm('Clear all password history?')) {
             setHistory([]);
             localStorage.removeItem('passwordHistory');
+			logger.debug('<<< Exiting clearHistory()');
         }
     };
 
