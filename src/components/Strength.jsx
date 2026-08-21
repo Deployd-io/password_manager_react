@@ -1,13 +1,18 @@
+import logger from "../utils/logger.js";
 const PasswordStrength = ({ password = "" }) => {
     const getPasswordStrength = () => {
+		logger.debug('>>> Entering getPasswordStrength()');
         if (!password || password.length < 1) {
             return null;
         }
 
         let score = 0;
         const hasLower = /[a-z]/.test(password);
+		logger.debug(`getPasswordStrength(): hasLower → ${hasLower}`);
         const hasUpper = /[A-Z]/.test(password);
+		logger.debug(`getPasswordStrength(): hasUpper → ${hasUpper}`);
         const hasNumber = /[0-9]/.test(password);
+		logger.debug(`getPasswordStrength(): hasNumber → ${hasNumber}`);
         const hasSpecial = /[!@#$%^&*()_\-+={\[}\]|:;<,>.?/+]/.test(password);
 
         if (password.length >= 8) score += 1;
@@ -21,6 +26,7 @@ const PasswordStrength = ({ password = "" }) => {
         if (hasSpecial) score += 1;
 
         if (score <= 3) {
+			logger.debug(`getPasswordStrength(): hasSpecial → ${hasSpecial}`);
             return {
                 label: "Weak",
                 color: "text-red-700 dark:text-red-400",
@@ -45,6 +51,7 @@ const PasswordStrength = ({ password = "" }) => {
                 bars: 3
             };
         } else {
+			logger.debug('<<< Exiting getPasswordStrength()');
             return {
                 label: "Strong",
                 color: "text-emerald-700 dark:text-emerald-400",

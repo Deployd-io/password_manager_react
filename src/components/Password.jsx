@@ -3,8 +3,10 @@ import usePasswordGenerator from './PasswordGenerator';
 import PasswordStrength from './Strength';
 import PasswordStorage from './PasswordStorage';
 import PasswordHistory from './PasswordHistory';
+import logger from "../utils/logger.js";
 
 const Password = () => {
+logger.debug('>>> Entering Password()');
 
     const { password, errorMessage, generatePassword } = usePasswordGenerator();
 
@@ -24,22 +26,28 @@ const Password = () => {
     ]);
 
     const checkClick = (i) => {
+		logger.debug(`>>> Entering checkClick(i=${i})`);
         const updateCheckbox = [...checkboxData];
         updateCheckbox[i].status = !updateCheckbox[i].status;
         setCheckboxData(updateCheckbox);
+		logger.debug(`<<< Exiting checkClick(i=${i})`);
     };
 
     const handlCopy = () => {
+		logger.debug('>>> Entering handlCopy()');
         navigator.clipboard.writeText(password);
         setCopyMessage(true);
         setTimeout(() => {
             setCopyMessage(false);
         }, 2000);
+		logger.debug('<<< Exiting handlCopy()');
     };
 
     const handleGenerate = () => {
+		logger.debug('>>> Entering handleGenerate()');
         generatePassword(checkboxData, length);
         setPasswordsGenerated(prev => prev + 1);
+		logger.debug('<<< Exiting handleGenerate()');
     };
 
     useEffect(() => {
@@ -52,15 +60,20 @@ const Password = () => {
     }, [darkMode]);
 
     const toggleTheme = () => {
+		logger.debug('>>> Entering toggleTheme()');
         setDarkMode(!darkMode);
+		logger.debug('<<< Exiting toggleTheme()');
     };
 
     const handleSelectAll = () => {
+		logger.debug('>>> Entering handleSelectAll()');
         const allSelected = checkboxData.every(cb => cb.status);
         setCheckboxData(checkboxData.map(cb => ({ ...cb, status: !allSelected })));
+		logger.debug(`handleSelectAll(): allSelected → ${allSelected}`);
     };
 
     const handleQuickGenerate = (presetLength, presetName) => {
+		logger.debug(`>>> Entering handleQuickGenerate(presetLength=${presetLength},presetName=${presetName})`);
         const presets = {
             weak: [
                 { title: "Include Uppercase Letters", status: false, icon: "Aa" },
@@ -85,8 +98,10 @@ const Password = () => {
         setLength(presetLength);
         generatePassword(presets[presetName], presetLength);
         setPasswordsGenerated(prev => prev + 1);
+		logger.debug(`<<< Exiting handleQuickGenerate(presetLength=${presetLength},presetName=${presetName})`);
     };
 
+	logger.debug('<<< Exiting Password()');
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-4 sm:px-6 lg:px-8 transition-colors">
             <div className="max-w-6xl mx-auto">
