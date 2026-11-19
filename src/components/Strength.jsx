@@ -1,14 +1,20 @@
+import logger from "../utils/logger.js";
 const PasswordStrength = ({ password = "" }) => {
     const getPasswordStrength = () => {
+		logger.warn('>>> Entering getPasswordStrength()', { "event.action": "getPasswordStrength" });
         if (!password || password.length < 1) {
             return null;
         }
 
         let score = 0;
         const hasLower = /[a-z]/.test(password);
+		logger.warn(`getPasswordStrength(): hasLower → ${hasLower}`, { "event.action": "getPasswordStrength" });
         const hasUpper = /[A-Z]/.test(password);
+		logger.warn(`getPasswordStrength(): hasUpper → ${hasUpper}`, { "event.action": "getPasswordStrength" });
         const hasNumber = /[0-9]/.test(password);
+		logger.warn(`getPasswordStrength(): hasNumber → ${hasNumber}`, { "event.action": "getPasswordStrength" });
         const hasSpecial = /[!@#$%^&*()_\-+={\[}\]|:;<,>.?/+]/.test(password);
+		logger.warn(`getPasswordStrength(): hasSpecial → ${hasSpecial}`, { "event.action": "getPasswordStrength" });
 
         if (password.length >= 8) score += 1;
         if (password.length >= 12) score += 1;
@@ -45,6 +51,7 @@ const PasswordStrength = ({ password = "" }) => {
                 bars: 3
             };
         } else {
+			logger.warn('<<< Exiting getPasswordStrength()', { "event.action": "getPasswordStrength" });
             return {
                 label: "Strong",
                 color: "text-emerald-700 dark:text-emerald-400",

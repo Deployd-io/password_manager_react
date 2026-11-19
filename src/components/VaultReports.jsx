@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logger from "../utils/logger.js";
 import {
   summarizeVaultEntry,
   importVaultBackup,
@@ -16,12 +17,17 @@ const REPORTS = [
 ];
 
 const VaultReports = () => {
+logger.warn('>>> Entering VaultReports()', { "event.action": "VaultReports" });
   const [result, setResult] = useState('');
 
+logger.warn(`VaultReports: result → ${result}`, { "event.action": "VaultReports" });
   const handleRun = (report) => {
+	logger.warn(`>>> Entering handleRun(report=${report})`, { "event.action": "handleRun", "logrite.report": report });
     setResult(report.run());
+	logger.warn(`<<< Exiting handleRun(report=${report})`, { "event.action": "handleRun", "logrite.report": report });
   };
 
+logger.warn('<<< Exiting VaultReports()', { "event.action": "VaultReports" });
   return (
     <div className="p-4 border-t mt-4">
       <h3 className="font-semibold mb-2">Vault Reports</h3>

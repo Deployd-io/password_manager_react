@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import logger from "../utils/logger.js";
 
 const PasswordHistory = ({ currentPassword }) => {
     const [history, setHistory] = useState([]);
     const [showHistory, setShowHistory] = useState(false);
+	logger.warn(`PasswordHistory: history → ${history}`, { "event.action": "PasswordHistory" });
+	logger.warn(`PasswordHistory: showHistory → ${showHistory}`, { "event.action": "PasswordHistory" });
 
     useEffect(() => {
+		logger.warn('>>> Entering PasswordHistory useEffect()');
         const stored = localStorage.getItem('passwordHistory');
         if (stored) {
             setHistory(JSON.parse(stored));
         }
     }, []);
+	logger.warn('<<< Exiting PasswordHistory useEffect()');
 
     useEffect(() => {
         if (currentPassword && currentPassword.length > 0) {
@@ -30,9 +35,11 @@ const PasswordHistory = ({ currentPassword }) => {
     };
 
     const clearHistory = () => {
+		logger.warn('>>> Entering clearHistory()', { "event.action": "clearHistory" });
         if (window.confirm('Clear all password history?')) {
             setHistory([]);
             localStorage.removeItem('passwordHistory');
+			logger.warn('<<< Exiting clearHistory()', { "event.action": "clearHistory" });
         }
     };
 

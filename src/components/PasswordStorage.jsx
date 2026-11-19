@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import logger from "../utils/logger.js";
 
 const PasswordStorage = ({ currentPassword }) => {
     const [storedPasswords, setStoredPasswords] = useState([]);
     const [isAddingNew, setIsAddingNew] = useState(false);
+	logger.warn(`PasswordStorage: isAddingNew → ${isAddingNew}`, { "event.action": "PasswordStorage" });
+	logger.warn(`PasswordStorage: editingId → ${editingId}`, { "event.action": "PasswordStorage" });
     const [editingId, setEditingId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [showPassword, setShowPassword] = useState({});
@@ -14,12 +17,16 @@ const PasswordStorage = ({ currentPassword }) => {
         notes: ''
     });
 
+	logger.warn(`PasswordStorage: searchTerm → ${searchTerm}`, { "event.action": "PasswordStorage" });
     useEffect(() => {
+		logger.warn('>>> Entering PasswordStorage useEffect()');
         const stored = localStorage.getItem('storedPasswords');
+		logger.warn(`PasswordStorage: formData → ${formData}`, { "event.action": "PasswordStorage" });
         if (stored) {
             setStoredPasswords(JSON.parse(stored));
         }
     }, []);
+	logger.warn('<<< Exiting PasswordStorage useEffect()');
 
     useEffect(() => {
         if (storedPasswords.length > 0) {
@@ -34,11 +41,14 @@ const PasswordStorage = ({ currentPassword }) => {
     }, [currentPassword]);
 
     const handleInputChange = (e) => {
+		logger.warn(`>>> Entering handleInputChange(e=${e})`, { "event.action": "handleInputChange", "logrite.e": e });
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+		logger.warn(`<<< Exiting handleInputChange(e=${e})`, { "event.action": "handleInputChange", "logrite.e": e });
     };
 
     const handleSubmit = (e) => {
+		logger.warn(`>>> Entering handleSubmit(e=${e})`, { "event.action": "handleSubmit", "logrite.e": e });
         e.preventDefault();
         if (!formData.url || !formData.password) {
             alert('URL and Password are required!');
@@ -64,9 +74,11 @@ const PasswordStorage = ({ currentPassword }) => {
 
         setFormData({ url: '', username: '', password: '', notes: '' });
         setIsAddingNew(false);
+		logger.warn(`<<< Exiting handleSubmit(e=${e})`, { "event.action": "handleSubmit", "logrite.e": e });
     };
 
     const handleEdit = (item) => {
+		logger.warn(`>>> Entering handleEdit(item=${item})`, { "event.action": "handleEdit", "logrite.item": item });
         setFormData({
             url: item.url,
             username: item.username,
@@ -75,40 +87,55 @@ const PasswordStorage = ({ currentPassword }) => {
         });
         setEditingId(item.id);
         setIsAddingNew(true);
+		logger.warn(`<<< Exiting handleEdit(item=${item})`, { "event.action": "handleEdit", "logrite.item": item });
     };
 
     const handleDelete = (id) => {
+		logger.warn(`>>> Entering handleDelete(id=${id})`, { "event.action": "handleDelete", "logrite.id": id });
         if (window.confirm('Delete this password?')) {
             setStoredPasswords(prev => prev.filter(item => item.id !== id));
             if (storedPasswords.length === 1) {
                 localStorage.removeItem('storedPasswords');
+				logger.warn(`<<< Exiting handleDelete(id=${id})`, { "event.action": "handleDelete", "logrite.id": id });
             }
         }
     };
 
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text);
+		logger.warn(`<<< Exiting handleCopy(text=${text})`, { "event.action": "handleCopy", "logrite.text": text });
     };
 
     const togglePasswordVisibility = (id) => {
+		logger.warn(`>>> Entering togglePasswordVisibility(id=${id})`, { "event.action": "togglePasswordVisibility", "logrite.id": id });
         setShowPassword(prev => ({ ...prev, [id]: !prev[id] }));
+		logger.warn(`<<< Exiting togglePasswordVisibility(id=${id})`, { "event.action": "togglePasswordVisibility", "logrite.id": id });
     };
 
     const handleExport = () => {
+		logger.warn('>>> Entering handleExport()', { "event.action": "handleExport" });
         const dataStr = JSON.stringify(storedPasswords, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
+		logger.warn(`handleExport(): dataStr → ${dataStr}`, { "event.action": "handleExport" });
+		logger.warn(`handleExport(): dataBlob → ${dataBlob}`, { "event.action": "handleExport" });
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
+		logger.warn(`handleExport(): url → ${url}`, { "event.action": "handleExport" });
+		logger.warn(`handleExport(): link → ${link}`, { "event.action": "handleExport" });
         link.href = url;
         link.download = `passwords_${new Date().toISOString().split('T')[0]}.json`;
+		logger.warn(`handleExport(): link.href → ${link.href}`, { "event.action": "handleExport" });
         link.click();
         URL.revokeObjectURL(url);
+		logger.warn('<<< Exiting handleExport()', { "event.action": "handleExport" });
     };
 
     const handleImportJSON = (e) => {
+		logger.warn(`>>> Entering handleImportJSON(e=${e})`, { "event.action": "handleImportJSON", "logrite.e": e });
         const file = e.target.files[0];
         if (file && file.name.endsWith('.json')) {
             const reader = new FileReader();
+			logger.warn(`handleImportJSON(e=${e}): reader → ${reader}`, { "event.action": "handleImportJSON", "logrite.e": e });
             reader.onload = (event) => {
                 try {
                     const imported = JSON.parse(event.target.result);
@@ -118,18 +145,22 @@ const PasswordStorage = ({ currentPassword }) => {
                         alert(`Successfully imported ${imported.length} passwords!`);
                     }
                 } catch (error) {
+					logger.error(`Exception in handleImportJSON(e=${e}): ${error.message}`, error, { "event.action": "handleImportJSON", "event.category": "process", "logrite.e": e });
                     alert('Invalid JSON file format!');
                 }
             };
             reader.readAsText(file);
         }
         e.target.value = '';
+		logger.warn(`<<< Exiting handleImportJSON(e=${e})`, { "event.action": "handleImportJSON", "logrite.e": e });
     };
 
     const handleImportCSV = (e) => {
+		logger.warn(`>>> Entering handleImportCSV(e=${e})`, { "event.action": "handleImportCSV", "logrite.e": e });
         const file = e.target.files[0];
         if (file && (file.name.endsWith('.csv') || file.name.endsWith('.xlsx'))) {
             const reader = new FileReader();
+			logger.warn(`handleImportCSV(e=${e}): reader → ${reader}`, { "event.action": "handleImportCSV", "logrite.e": e });
             reader.onload = (event) => {
                 try {
                     const text = event.target.result;
@@ -168,15 +199,18 @@ const PasswordStorage = ({ currentPassword }) => {
                         alert('No valid password entries found in the CSV file.');
                     }
                 } catch (error) {
+					logger.error(`Exception in handleImportCSV(e=${e}): ${error.message}`, error, { "event.action": "handleImportCSV", "event.category": "process", "logrite.e": e });
                     alert('Error reading CSV file. Please check the format.');
                 }
             };
             reader.readAsText(file);
         }
         e.target.value = '';
+		logger.warn(`<<< Exiting handleImportCSV(e=${e})`, { "event.action": "handleImportCSV", "logrite.e": e });
     };
 
     const exportToCSV = () => {
+		logger.warn('>>> Entering exportToCSV()', { "event.action": "exportToCSV" });
         const headers = ['URL', 'Username', 'Password', 'Notes'];
         const csvContent = [
             headers.join(','),
@@ -186,14 +220,20 @@ const PasswordStorage = ({ currentPassword }) => {
                     .join(',')
             )
         ].join('\n');
+		logger.warn(`exportToCSV(): headers → ${headers}`, { "event.action": "exportToCSV" });
 
         const blob = new Blob([csvContent], { type: 'text/csv' });
+		logger.warn(`exportToCSV(): blob → ${blob}`, { "event.action": "exportToCSV" });
         const url = URL.createObjectURL(blob);
+		logger.warn(`exportToCSV(): url → ${url}`, { "event.action": "exportToCSV" });
         const link = document.createElement('a');
+		logger.warn(`exportToCSV(): link → ${link}`, { "event.action": "exportToCSV" });
         link.href = url;
+		logger.warn(`exportToCSV(): link.href → ${link.href}`, { "event.action": "exportToCSV" });
         link.download = `passwords_${new Date().toISOString().split('T')[0]}.csv`;
         link.click();
         URL.revokeObjectURL(url);
+		logger.warn('<<< Exiting exportToCSV()', { "event.action": "exportToCSV" });
     };
 
     const filteredPasswords = storedPasswords.filter(item => 

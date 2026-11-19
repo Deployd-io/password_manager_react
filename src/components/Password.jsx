@@ -3,12 +3,18 @@ import usePasswordGenerator from './PasswordGenerator';
 import PasswordStrength from './Strength';
 import PasswordStorage from './PasswordStorage';
 import PasswordHistory from './PasswordHistory';
+import logger from "../utils/logger.js";
 
 const Password = () => {
+logger.warn('>>> Entering Password()', { "event.action": "Password" });
 
     const { password, errorMessage, generatePassword } = usePasswordGenerator();
 
     const [length, setLength] = useState(12);
+	logger.warn(`Password: length → ${length}`, { "event.action": "Password" });
+	logger.warn(`Password: copyMessage → ${copyMessage}`, { "event.action": "Password" });
+	logger.warn(`Password: activeTab → ${activeTab}`, { "event.action": "Password" });
+	logger.warn(`Password: darkMode → ${darkMode}`, { "event.action": "Password" });
     const [copyMessage, setCopyMessage] = useState(false);
     const [activeTab, setActiveTab] = useState('generator');
     const [passwordsGenerated, setPasswordsGenerated] = useState(0);
@@ -23,26 +29,34 @@ const Password = () => {
         { title: "Include Special Characters", status: false, icon: "@#$" },
     ]);
 
+	logger.warn(`Password: checkboxData → ${checkboxData}`, { "event.action": "Password" });
     const checkClick = (i) => {
+		logger.warn(`>>> Entering checkClick(i=${i})`, { "event.action": "checkClick", "logrite.i": i });
         const updateCheckbox = [...checkboxData];
         updateCheckbox[i].status = !updateCheckbox[i].status;
         setCheckboxData(updateCheckbox);
+		logger.warn(`<<< Exiting checkClick(i=${i})`, { "event.action": "checkClick", "logrite.i": i });
     };
 
     const handlCopy = () => {
+		logger.warn('>>> Entering handlCopy()', { "event.action": "handlCopy" });
         navigator.clipboard.writeText(password);
         setCopyMessage(true);
         setTimeout(() => {
             setCopyMessage(false);
         }, 2000);
+		logger.warn('<<< Exiting handlCopy()', { "event.action": "handlCopy" });
     };
 
     const handleGenerate = () => {
+		logger.warn('>>> Entering handleGenerate()', { "event.action": "handleGenerate" });
         generatePassword(checkboxData, length);
         setPasswordsGenerated(prev => prev + 1);
+		logger.warn('<<< Exiting handleGenerate()', { "event.action": "handleGenerate" });
     };
 
     useEffect(() => {
+		logger.warn('>>> Entering Password useEffect()');
         localStorage.setItem('darkMode', JSON.stringify(darkMode));
         if (darkMode) {
             document.documentElement.classList.add('dark');
@@ -50,17 +64,23 @@ const Password = () => {
             document.documentElement.classList.remove('dark');
         }
     }, [darkMode]);
+	logger.warn('<<< Exiting Password useEffect()');
 
     const toggleTheme = () => {
+		logger.warn('>>> Entering toggleTheme()', { "event.action": "toggleTheme" });
         setDarkMode(!darkMode);
+		logger.warn('<<< Exiting toggleTheme()', { "event.action": "toggleTheme" });
     };
 
     const handleSelectAll = () => {
+		logger.warn('>>> Entering handleSelectAll()', { "event.action": "handleSelectAll" });
         const allSelected = checkboxData.every(cb => cb.status);
         setCheckboxData(checkboxData.map(cb => ({ ...cb, status: !allSelected })));
+		logger.warn(`handleSelectAll(): allSelected → ${allSelected}`, { "event.action": "handleSelectAll" });
     };
 
     const handleQuickGenerate = (presetLength, presetName) => {
+		logger.warn(`>>> Entering handleQuickGenerate(presetLength=${presetLength},presetName=${presetName})`, { "event.action": "handleQuickGenerate", "logrite.presetLength": presetLength, "logrite.presetName": presetName });
         const presets = {
             weak: [
                 { title: "Include Uppercase Letters", status: false, icon: "Aa" },
@@ -85,8 +105,10 @@ const Password = () => {
         setLength(presetLength);
         generatePassword(presets[presetName], presetLength);
         setPasswordsGenerated(prev => prev + 1);
+		logger.warn(`<<< Exiting handleQuickGenerate(presetLength=${presetLength},presetName=${presetName})`, { "event.action": "handleQuickGenerate", "logrite.presetLength": presetLength, "logrite.presetName": presetName });
     };
 
+	logger.warn('<<< Exiting Password()', { "event.action": "Password" });
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-4 sm:px-6 lg:px-8 transition-colors">
             <div className="max-w-6xl mx-auto">
