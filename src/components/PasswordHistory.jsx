@@ -31,7 +31,9 @@ const PasswordHistory = ({ currentPassword }) => {
     }, [currentPassword]);
 
     const handleCopy = (password) => {
+		logger.warn('PasswordHistory', `>>> Entering handleCopy(password=${password})`, { "event.action": "handleCopy" });
         navigator.clipboard.writeText(password);
+		logger.warn('PasswordHistory', `<<< Exiting handleCopy(password=${password})`, { "event.action": "handleCopy" });
     };
 
     const clearHistory = () => {

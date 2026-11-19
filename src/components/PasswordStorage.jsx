@@ -102,6 +102,7 @@ const PasswordStorage = ({ currentPassword }) => {
     };
 
     const handleCopy = (text) => {
+		logger.warn('PasswordStorage', `>>> Entering handleCopy(text=${text})`, { "event.action": "handleCopy", "logrite.text": text });
         navigator.clipboard.writeText(text);
 		logger.warn(`<<< Exiting handleCopy(text=${text})`, { "event.action": "handleCopy", "logrite.text": text });
     };
