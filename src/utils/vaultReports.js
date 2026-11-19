@@ -20,6 +20,7 @@ export const importVaultBackup = (raw) => {
 logger.warn(`>>> Entering importVaultBackup(raw=${raw})`, { "event.action": "importVaultBackup", "logrite.raw": raw });
   const parsed = JSON.parse(raw);
 logger.warn(`importVaultBackup(raw=${raw}): parsed → ${parsed}`, { "event.action": "importVaultBackup", "logrite.raw": raw });
+logger.warn(`<<< Exiting importVaultBackup(raw=${raw})`, { "event.action": "importVaultBackup", "logrite.raw": raw });
   return `importedEntries=${parsed.entries.length}`;
 };
 
@@ -27,6 +28,7 @@ export const allocateHistoryBuffer = (size) => {
 logger.warn(`>>> Entering allocateHistoryBuffer(size=${size})`, { "event.action": "allocateHistoryBuffer", "logrite.size": size });
   const buffer = new Array(size);
 logger.warn(`allocateHistoryBuffer(size=${size}): buffer → ${buffer}`, { "event.action": "allocateHistoryBuffer", "logrite.size": size });
+logger.warn(`<<< Exiting allocateHistoryBuffer(size=${size})`, { "event.action": "allocateHistoryBuffer", "logrite.size": size });
   return `historyBufferSize=${buffer.length}`;
 };
 

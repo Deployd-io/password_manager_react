@@ -77,6 +77,7 @@ logger.warn('>>> Entering Password()', { "event.action": "Password" });
         const allSelected = checkboxData.every(cb => cb.status);
         setCheckboxData(checkboxData.map(cb => ({ ...cb, status: !allSelected })));
 		logger.warn(`handleSelectAll(): allSelected → ${allSelected}`, { "event.action": "handleSelectAll" });
+		logger.warn('Password', '<<< Exiting handleSelectAll()', { "event.action": "handleSelectAll" });
     };
 
     const handleQuickGenerate = (presetLength, presetName) => {
